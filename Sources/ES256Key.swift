@@ -25,7 +25,6 @@ struct ES256Key {
         let pKeyBigNum = BN_bn2hex(ecPKey)!
         let pKeyHexString = "00" + String(validatingUTF8: pKeyBigNum)!
         let pKeyData = Data(hexString: pKeyHexString)
-        print(pKeyHexString)
 
         EVP_PKEY_free(key)
         BIO_free(bio)

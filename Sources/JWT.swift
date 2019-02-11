@@ -19,6 +19,9 @@ struct JWT {
         let payloadPart =  try encoder.encode(self.payload).base64URLEncodedString()
 
         let digest = "\(headerPart).\(payloadPart)"
-        return digest
+
+        let signature = try self.signer.sign(digest)
+
+        return "\(digest).\(Data(signature).base64URLEncodedString())"
     }
 }
