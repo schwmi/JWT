@@ -1,10 +1,3 @@
-//
-//  Data+Base64.swift
-//  JWT
-//
-//  Created by Michael Schwarz on 11.02.19.
-//
-
 import Foundation
 
 
