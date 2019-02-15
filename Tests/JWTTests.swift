@@ -39,17 +39,8 @@ ph1Vmrplh1QWv64YHloD4g+TZ7Q7UVYp6w==
 """
         let privateKey = ES256Key(pemString: privateKeyPem)
         let signer = ES256Signer(privateKey: privateKey)
-        let jwt = JWT(header: .init(keyIdentifier: "Test"),
-                      payload: .init(issuerIdentifier: "ID", expirationTime: 0),
-                      signer: signer)
-        guard let token = try? jwt.makeToken() else {
-            XCTFail("We should have a token here")
-            return
-        }
-
-        let components = token.components(separatedBy: ".")
-        let digest = "\(components[0]).\(components[1])"
-        let signature = components[2]
+        let digest = "eyJhbGciOiJFUzI1NiIsImtpZCI6IlRlc3QiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJJRCIsImV4cCI6MCwiYXVkIjoiYXBwc3RvcmVjb25uZWN0LXYxIn0"
+        let signature = "MEUCIE_CUuy8-xhGorq41Sqb-09CUzzZGqyAtuAjqFqI1OMNAiEA0D8bGKj8IUguw-9k7epRhNCuB8nTeeeXA4jwUpdv8Rs"
         do {
             let verification = try signer.verifySignature(signature, message: digest)
             XCTAssertTrue(verification)

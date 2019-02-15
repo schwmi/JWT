@@ -20,6 +20,19 @@ extension Data {
         self = data
     }
 
+    /// Creates `Data` from a base64URLEncodedString string
+    ///
+    /// - Returns: A base64 encoded `String`.
+    init?(base64URLEncodedString: String) {
+        var base64 = base64URLEncodedString
+            .replacingOccurrences(of: "-", with: "+")
+            .replacingOccurrences(of: "_", with: "/")
+        if base64.count % 4 != 0 {
+            base64.append(String(repeating: "=", count: 4 - base64.count % 4))
+        }
+        self.init(base64Encoded: base64)
+    }
+
     /// Encodes the data using base64.
     ///
     /// - Returns: A base64 encoded `String`.

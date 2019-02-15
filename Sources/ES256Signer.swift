@@ -7,6 +7,7 @@ final class ES256Signer {
         case signatureCopy
         case keyCreation
         case publicKeyCreation
+        case signatureVerification
     }
 
     private let curve = NID_X9_62_prime256v1
@@ -43,11 +44,14 @@ final class ES256Signer {
     }
 
     public func verifySignature(_ signature: String, message: String) throws -> Bool {
-        let der = [UInt8](signature.utf8)
+        guard let data = Data(base64URLEncodedString: signature) else {
+            throw Error.signatureVerification
+        }
+        let der = [UInt8](data)
         let digest = try SHA256Hasher().hash(from: message)
         var signaturePointer: UnsafePointer? = UnsafePointer(der)
         let signature = d2i_ECDSA_SIG(nil, &signaturePointer, der.count)
-        let ecKey = try self.newECPublicKey()
+        let ecKey = try self.newECKeyPair()
         let verified = ECDSA_do_verify(digest, Int32(digest.count), signature, ecKey)
         return verified == 1
     }
@@ -79,8 +83,12 @@ private extension ES256Signer {
 
         let group = EC_KEY_get0_group(ecKey)
         let publicKey = EC_POINT_new(group)
-        EC_POINT_mul(group, publicKey, &privateNum, nil, nil, context)
-        EC_KEY_set_public_key(ecKey, publicKey)
+        guard EC_POINT_mul(group, publicKey, &privateNum, nil, nil, context) == 1 else {
+            throw Error.signing
+        }
+        guard EC_KEY_set_public_key(ecKey, publicKey) == 1 else {
+            throw Error.signing
+        }
 
         // Release resources
         EC_POINT_free(publicKey)
