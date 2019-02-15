@@ -41,6 +41,16 @@ final class ES256Signer {
 
         return derBytes
     }
+
+    public func verifySignature(_ signature: String, message: String) throws -> Bool {
+        let der = [UInt8](signature.utf8)
+        let digest = try SHA256Hasher().hash(from: message)
+        var signaturePointer: UnsafePointer? = UnsafePointer(der)
+        let signature = d2i_ECDSA_SIG(nil, &signaturePointer, der.count)
+        let ecKey = try self.newECPublicKey()
+        let verified = ECDSA_do_verify(digest, Int32(digest.count), signature, ecKey)
+        return verified == 1
+    }
 }
 
 // MARK: - Private

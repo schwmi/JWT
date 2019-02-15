@@ -21,6 +21,7 @@ struct ES256Key {
 
         PEM_read_bio_PrivateKey(bio, &key, nil, nil)
         let ecKey = EVP_PKEY_get1_EC_KEY(key)
+        EC_KEY_set_conv_form(ecKey, POINT_CONVERSION_UNCOMPRESSED)
         let ecPKey = EC_KEY_get0_private_key(ecKey!)
         let pKeyBigNum = BN_bn2hex(ecPKey)!
         let pKeyHexString = "00" + String(validatingUTF8: pKeyBigNum)!
