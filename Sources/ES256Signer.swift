@@ -98,15 +98,4 @@ private extension ES256Signer {
 
         return ecKey
     }
-
-    func newECPublicKey() throws -> OpaquePointer {
-        var ecKey: OpaquePointer? = try newECKey()
-        var publicBytesPointer: UnsafePointer? = UnsafePointer<UInt8>(self.privateKey)
-
-        if let ecKey = o2i_ECPublicKey(&ecKey, &publicBytesPointer, self.privateKey.count) {
-            return ecKey
-        } else {
-            throw Error.publicKeyCreation
-        }
-    }
 }
