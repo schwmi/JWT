@@ -6,7 +6,6 @@ final class ES256Signer {
         case signing
         case signatureCopy
         case keyCreation
-        case publicKeyCreation
         case signatureVerification
     }
 
