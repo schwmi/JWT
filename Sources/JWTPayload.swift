@@ -17,7 +17,7 @@ public struct Payload: Codable {
         case audience = "aud"
     }
 
-    init(issuerIdentifier: String, expirationTime: TimeInterval) {
+    public init(issuerIdentifier: String, expirationTime: TimeInterval) {
         self.issuerIdentifier = issuerIdentifier
         self.expirationTime = expirationTime
     }
