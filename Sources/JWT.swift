@@ -22,6 +22,8 @@ struct JWT {
 
         let signature = try self.signer.sign(digest)
 
-        return "\(digest).\(Data(signature).base64URLEncodedString())"
+        let asn1 = try ASN1DERDecoder().parseASN1(fromDER: Data(signature))
+        let rawSignature = try ES256RawSignatureBuilder(asn1Element: asn1).makeRawSignature()
+        return "\(digest).\(rawSignature.base64URLEncodedString())"
     }
 }
