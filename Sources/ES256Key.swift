@@ -2,13 +2,13 @@ import Foundation
 import OpenSSL
 
 
-struct ES256Key {
+public struct ES256Key {
 
     private let pemString: String
 
     // MARK: - Lifecycle
 
-    init(pemString: String) {
+    public init(pemString: String) {
         self.pemString = pemString
     }
 

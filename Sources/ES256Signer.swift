@@ -1,6 +1,8 @@
 import Foundation
 import OpenSSL
-final class ES256Signer {
+
+
+public final class ES256Signer {
 
     enum Error: Swift.Error {
         case signing
@@ -14,7 +16,7 @@ final class ES256Signer {
 
     // MARK: - Lifecycle
 
-    init(privateKey: ES256Key) {
+    public init(privateKey: ES256Key) {
         self.privateKey = [UInt8](privateKey.makeDERRepresentation())
     }
 

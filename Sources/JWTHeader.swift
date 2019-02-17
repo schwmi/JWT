@@ -2,7 +2,7 @@ import Foundation
 
 
 /// JWT Header for the AppStore Connect Auth
-struct Header: Codable {
+public struct Header: Codable {
 
     /// All JWTs for App Store Connect API must be signed with ES256 encryption
     let algorithm: String = "ES256"
@@ -17,5 +17,9 @@ struct Header: Codable {
         case algorithm = "alg"
         case keyIdentifier = "kid"
         case tokenType = "typ"
+    }
+
+    public init(keyIdentifier: String) {
+        self.keyIdentifier = keyIdentifier
     }
 }

@@ -1,7 +1,7 @@
 import Foundation
 
 
-struct Payload: Codable {
+public struct Payload: Codable {
     /// Your issuer identifier from the API Keys page in App Store Connect (Ex: 57246542-96fe-1a63-e053-0824d011072a)
     let issuerIdentifier: String
 
@@ -15,5 +15,10 @@ struct Payload: Codable {
         case issuerIdentifier = "iss"
         case expirationTime = "exp"
         case audience = "aud"
+    }
+
+    init(issuerIdentifier: String, expirationTime: TimeInterval) {
+        self.issuerIdentifier = issuerIdentifier
+        self.expirationTime = expirationTime
     }
 }
