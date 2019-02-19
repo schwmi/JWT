@@ -10,12 +10,12 @@ let package = Package(
             targets: ["JWT"])
     ],
     dependencies: [
-        .package(url: "https://github.com/IBM-Swift/OpenSSL.git", from: "2.2.0")
+        .package(url: "https://github.com/vapor-community/copenssl.git", from: "1.0.0-rc.1")
     ],
     targets: [
         .target(
             name: "JWT",
-            dependencies: ["OpenSSL"],
+            dependencies: ["COpenSSL"],
             path: "Sources"),
         .testTarget(
             name: "JWTTests",
