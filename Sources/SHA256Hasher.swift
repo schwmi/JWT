@@ -1,5 +1,5 @@
 import Foundation
-import OpenSSL
+import Crypto
 
 
 final class SHA256Hasher {
@@ -14,17 +14,10 @@ final class SHA256Hasher {
     }
 
     func hash(from data: Data) throws -> [UInt8] {
-        var data = data
-        var ctx = SHA256_CTX()
-        SHA256_Init(&ctx)
-        guard SHA256_Update(&ctx, [UInt8](data), data.count) == 1 else {
-            throw Error.updating
-        }
+        var sha256 = SHA256()
+        sha256.update(data: data)
+        let digest = sha256.finalize()
 
-        var digest = [UInt8](repeating: 0, count: Int(SHA256_DIGEST_LENGTH))
-        guard SHA256_Final(&digest, &ctx) == 1 else {
-            throw Error.finalizing
-        }
-        return digest
+        return Array(digest)
     }
 }

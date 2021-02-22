@@ -1,21 +1,24 @@
-// swift-tools-version:4.2
+// swift-tools-version:5.1
 
 import PackageDescription
 
 let package = Package(
     name: "JWT",
+    platforms: [
+       .macOS(.v10_15)
+    ],
     products: [
         .library(
             name: "JWT",
             targets: ["JWT"])
     ],
     dependencies: [
-        .package(url: "https://github.com/IBM-Swift/OpenSSL.git", from: "2.2.0")
+        .package(url: "https://github.com/apple/swift-crypto.git", from: "1.1.0")
     ],
     targets: [
         .target(
             name: "JWT",
-            dependencies: ["OpenSSL"],
+            dependencies: ["Crypto"],
             path: "Sources"),
         .testTarget(
             name: "JWTTests",

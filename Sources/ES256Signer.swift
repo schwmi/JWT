@@ -1,5 +1,5 @@
 import Foundation
-import OpenSSL
+import CCryptoBoringSSL
 
 
 public final class ES256Signer {
@@ -24,12 +24,12 @@ public final class ES256Signer {
         var digest = try SHA256Hasher().hash(from: message)
         let ecKey = try newECKeyPair()
 
-        guard let signature = ECDSA_do_sign(&digest, Int32(digest.count), ecKey) else {
+        guard let signature = CCryptoBoringSSL_ECDSA_do_sign(&digest, digest.count, ecKey) else {
             throw Error.signing
         }
 
         var derEncodedSignature: UnsafeMutablePointer<UInt8>? = nil
-        let derLength = i2d_ECDSA_SIG(signature, &derEncodedSignature)
+        let derLength = CCryptoBoringSSL_i2d_ECDSA_SIG(signature, &derEncodedSignature)
 
         guard let derCopy = derEncodedSignature, derLength > 0 else {
             throw Error.signatureCopy
@@ -51,9 +51,9 @@ public final class ES256Signer {
         let der = [UInt8](data)
         let digest = try SHA256Hasher().hash(from: message)
         var signaturePointer: UnsafePointer? = UnsafePointer(der)
-        let signature = d2i_ECDSA_SIG(nil, &signaturePointer, der.count)
+        let signature = CCryptoBoringSSL_d2i_ECDSA_SIG(nil, &signaturePointer, der.count)
         let ecKey = try self.newECKeyPair()
-        let verified = ECDSA_do_verify(digest, Int32(digest.count), signature, ecKey)
+        let verified = CCryptoBoringSSL_ECDSA_do_verify(digest, digest.count, signature, ecKey)
         return verified == 1
     }
 }
@@ -63,7 +63,7 @@ public final class ES256Signer {
 private extension ES256Signer {
 
     func newECKey() throws -> OpaquePointer {
-        guard let ecKey = EC_KEY_new_by_curve_name(self.curve) else {
+        guard let ecKey = CCryptoBoringSSL_EC_KEY_new_by_curve_name(self.curve) else {
             throw Error.keyCreation
         }
         return ecKey
@@ -73,29 +73,29 @@ private extension ES256Signer {
         var privateNum = BIGNUM()
 
         // Set private key
-        BN_init(&privateNum)
-        BN_bin2bn(self.privateKey, Int32(self.privateKey.count), &privateNum)
+        CCryptoBoringSSL_BN_init(&privateNum)
+        CCryptoBoringSSL_BN_bin2bn(self.privateKey, self.privateKey.count, &privateNum)
         let ecKey = try newECKey()
-        EC_KEY_set_private_key(ecKey, &privateNum)
+        CCryptoBoringSSL_EC_KEY_set_private_key(ecKey, &privateNum)
 
         // Derive public key
-        let context = BN_CTX_new()
-        BN_CTX_start(context)
+        let context = CCryptoBoringSSL_BN_CTX_new()
+        CCryptoBoringSSL_BN_CTX_start(context)
 
-        let group = EC_KEY_get0_group(ecKey)
-        let publicKey = EC_POINT_new(group)
-        guard EC_POINT_mul(group, publicKey, &privateNum, nil, nil, context) == 1 else {
+        let group = CCryptoBoringSSL_EC_KEY_get0_group(ecKey)
+        let publicKey = CCryptoBoringSSL_EC_POINT_new(group)
+        guard CCryptoBoringSSL_EC_POINT_mul(group, publicKey, &privateNum, nil, nil, context) == 1 else {
             throw Error.signing
         }
-        guard EC_KEY_set_public_key(ecKey, publicKey) == 1 else {
+        guard CCryptoBoringSSL_EC_KEY_set_public_key(ecKey, publicKey) == 1 else {
             throw Error.signing
         }
 
         // Release resources
-        EC_POINT_free(publicKey)
-        BN_CTX_end(context)
-        BN_CTX_free(context)
-        BN_clear_free(&privateNum)
+        CCryptoBoringSSL_EC_POINT_free(publicKey)
+        CCryptoBoringSSL_BN_CTX_end(context)
+        CCryptoBoringSSL_BN_CTX_free(context)
+        CCryptoBoringSSL_BN_clear_free(&privateNum)
 
         return ecKey
     }
