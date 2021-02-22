@@ -17,6 +17,8 @@ DerivedData/
 !default.perspectivev3
 xcuserdata/
 
+.DS_Store
+
 ## Other
 *.moved-aside
 *.xccheckout
@@ -44,6 +46,7 @@ Example/SPM-AppStoreConnect-Swift-SDK/Package.pins
 Example/SPM-AppStoreConnect-Swift-SDK/Package.resolved
 Example/SPM-AppStoreConnect-Swift-SDK/.build/
 *.xcodeproj
+.swiftpm/
 
 # CocoaPods
 #
